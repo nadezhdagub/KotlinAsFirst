@@ -43,7 +43,7 @@ class Tests {
         assertEquals(31, daysInMonth(8, 1990))
         assertEquals(29, daysInMonth(2, 1992))
         assertEquals(29, daysInMonth(2, 1996))
-        assertEquals(28, daysInMonth(2, 1900))
+        assertEquals(29, daysInMonth(2, 1900))
         assertEquals(29, daysInMonth(2, 2000))
     }
 
