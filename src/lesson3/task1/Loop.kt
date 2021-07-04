@@ -67,7 +67,16 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun digitNumber(n: Int): Int = TODO()
+fun digitNumber(n: Int): Int {
+    var count = 0
+    var number = n
+    if (number == 0) return 1
+    while (number > 0) {
+        number /= 10
+        count += 1
+    }
+    return count
+}
 
 /**
  * Простая
@@ -75,7 +84,10 @@ fun digitNumber(n: Int): Int = TODO()
  * Найти число Фибоначчи из ряда 1, 1, 2, 3, 5, 8, 13, 21, ... с номером n.
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
-fun fib(n: Int): Int = TODO()
+fun fib(n: Int): Int {
+    if (n == 1 || n == 2) return 1
+    else return fib(n - 1) + fib(n - 2)
+}
 
 /**
  * Простая
@@ -83,21 +95,52 @@ fun fib(n: Int): Int = TODO()
  * Для заданных чисел m и n найти наименьшее общее кратное, то есть,
  * минимальное число k, которое делится и на m и на n без остатка
  */
-fun lcm(m: Int, n: Int): Int = TODO()
+fun lcm(m: Int, n: Int): Int {
+    var x = m
+    var y = n
+    var p = m * n
+    while (x != y) {
+        if (x > y) {
+            x = x - y
+        } else {
+            y = y - x
+        }
+    }
+    val k = p / x
+    return k
+}
 
 /**
  * Простая
  *
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
-fun minDivisor(n: Int): Int = TODO()
+fun minDivisor(n: Int): Int {
+    var i = 1
+    while (i <= n) {
+        i = i + 1
+        if (n % i == 0) {
+            return i
+        }
+    }
+    return i
+}
 
 /**
  * Простая
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int = TODO()
+fun maxDivisor(n: Int): Int {
+    var i = n - 1
+    while (i <= n) {
+        i = i - 1
+        if (n % i == 0) {
+            return i
+        }
+    }
+    return i
+}
 
 /**
  * Простая
@@ -106,7 +149,16 @@ fun maxDivisor(n: Int): Int = TODO()
  * Взаимно простые числа не имеют общих делителей, кроме 1.
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
-fun isCoPrime(m: Int, n: Int): Boolean = TODO()
+fun isCoPrime(m: Int, n: Int): Boolean {
+    var x = m
+    var y = n
+    while (x != y) {
+        if (y > x) y = y - x
+        else x = x - y
+    }
+    if (y == 1) return true
+    else return false
+}
 
 /**
  * Простая
@@ -115,7 +167,20 @@ fun isCoPrime(m: Int, n: Int): Boolean = TODO()
  * то есть, существует ли такое целое k, что m <= k*k <= n.
  * Например, для интервала 21..28 21 <= 5*5 <= 28, а для интервала 51..61 квадрата не существует.
  */
-fun squareBetweenExists(m: Int, n: Int): Boolean = TODO()
+fun squareBetweenExists(m: Int, n: Int): Boolean {
+    var x = m
+    var y = n
+    while (x != y) {
+        var i = sqrt(x.toDouble())
+        if (x/i == i) {
+            return true
+            x += 1
+        }
+        else return false
+    }
+    return false
+}
+
 
 /**
  * Средняя
@@ -144,7 +209,21 @@ fun collatzSteps(x: Int): Int = TODO()
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
-fun sin(x: Double, eps: Double): Double = TODO()
+fun sin(x: Double, eps: Double): Double {
+    var n = 1
+    var s = x
+    var si = x
+    var p = x
+    var f = 1
+    while ((abs(si)) > eps) {
+        p = -p * x * x
+        f = f * (n + 1) * (n + 2)
+        n = n + 2
+        si = p / f
+        s = s + si
+    }
+    return s
+}
 
 /**
  * Средняя
@@ -155,7 +234,21 @@ fun sin(x: Double, eps: Double): Double = TODO()
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
-fun cos(x: Double, eps: Double): Double = TODO()
+fun cos(x: Double, eps: Double): Double {
+    var n = 0.0
+    var s = 1.0
+    var si = x
+    var p = x
+    var f = 1.0
+    while ((abs(si)) > eps) {
+        p = -p * x
+        f = f * (n + 1) * (n + 2)
+        n = n + 2
+        si = p / f
+        s = s + si
+    }
+    return s
+}
 
 /**
  * Средняя
@@ -164,7 +257,16 @@ fun cos(x: Double, eps: Double): Double = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun revert(n: Int): Int = TODO()
+fun revert(n: Int): Int {
+    var reverse = 0;
+    var x = n
+    while (x != 0) {
+        reverse = reverse * 10;
+        reverse = reverse + x % 10;
+        x = x / 10;
+    }
+    return reverse;
+}
 
 /**
  * Средняя
@@ -175,7 +277,18 @@ fun revert(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean = TODO()
+fun isPalindrome(n: Int): Boolean {
+    var temp = n
+    var rev = 0
+    var x = n
+    while (x > 0) {
+        val dig = x % 10
+        rev = rev * 10 + dig
+        x = x / 10
+    }
+    if (temp == rev) return true
+    return false
+}
 
 /**
  * Средняя
@@ -185,7 +298,15 @@ fun isPalindrome(n: Int): Boolean = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun hasDifferentDigits(n: Int): Boolean = TODO()
+fun hasDifferentDigits(n: Int): Boolean {
+    var x = n
+    val d = n % 10
+    while (x > 0) {
+        if (x % 10 != d) return true
+        x /= 10
+    }
+    return false
+}
 
 /**
  * Сложная
@@ -208,3 +329,4 @@ fun squareSequenceDigit(n: Int): Int = TODO()
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun fibSequenceDigit(n: Int): Int = TODO()
+
