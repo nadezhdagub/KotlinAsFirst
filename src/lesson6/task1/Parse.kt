@@ -58,6 +58,36 @@ fun main() {
 }
 
 
+fun universalDateFunction(date: String, trend: Boolean): MutableList<String>? {
+    val dict = listOf(
+        "января", "февраля", "марта", "апреля", "мая", "июня", "июля",
+        "августа", "сентября", "октября", "ноября", "декабря"
+    )
+    val dateOnList = mutableListOf<String>()
+    val parts = if (trend) date.split(" ") else date.split(".")
+    for (part in parts)
+        dateOnList.add(part)
+    if (dateOnList.size != 3 || parts[0].toInt() < 1 || (!trend && (parts[1].toInt() < 1 || parts[1].toInt() > 12)))
+        return null
+    else if (trend && !dict.contains(dateOnList[1]))
+        return null
+    else {
+        if (trend && dict.contains(dateOnList[1]))
+            dateOnList[1] = (dict.indexOf(dateOnList[1]) + 1).toString()
+        else if (!trend && dateOnList[1].toInt() in 1..12)
+            dateOnList[1] = dict[dateOnList[1].toInt() - 1]
+        if (trend && daysInMonth(
+                dateOnList[1].toInt(),
+                dateOnList[2].toInt()
+            ) < dateOnList[0].toInt()
+        )
+            return null
+        if (!trend && daysInMonth(parts[1].toInt(), dateOnList[2].toInt()) < dateOnList[0].toInt())
+            return null
+    }
+    return dateOnList
+}
+
 /**
  * Средняя
  *
@@ -69,7 +99,14 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun dateStrToDigit(str: String): String = TODO()
+fun dateStrToDigit(str: String): String {
+    if (str.matches(Regex("""\d* [а-я]* \d*"""))) {
+        val list = universalDateFunction(str, true)
+        if (!list.isNullOrEmpty())
+            return String.format("%02d.%02d.%01d", list[0].toInt(), list[1].toInt(), list[2].toInt())
+    }
+    return ""
+}
 
 /**
  * Средняя
@@ -81,7 +118,14 @@ fun dateStrToDigit(str: String): String = TODO()
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30 февраля 2009) считается неверными
  * входными данными.
  */
-fun dateDigitToStr(digital: String): String = TODO()
+fun dateDigitToStr(digital: String): String {
+    if (digital.matches(Regex("""\d+\.\d+\.\d+"""))) {
+        val list = universalDateFunction(digital, false)
+        if (!list.isNullOrEmpty())
+            return String.format("%d %s %d", list[0].toInt(), list[1], list[2].toInt())
+    }
+    return ""
+}
 
 /**
  * Средняя
@@ -97,7 +141,12 @@ fun dateDigitToStr(digital: String): String = TODO()
  *
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
-fun flattenPhoneNumber(phone: String): String = TODO()
+fun flattenPhoneNumber(phone: String): String = if (!phone.contains(Regex("""\( *\)""")) &&
+                                                    !phone.matches(Regex("""\+ ?\d""")) &&
+                                                     phone.matches(Regex("""(\+? *\d[- \d]*(\([-\d ]+\)[-\d ]+)?)""")))
+        phone.filter { it !in " " && it !in "(" && it !in ")" && it !in "-" }
+    else ""
+
 
 /**
  * Средняя
@@ -109,7 +158,21 @@ fun flattenPhoneNumber(phone: String): String = TODO()
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int = TODO()
+fun bestLongJump(jumps: String): Int {
+    if (jumps.isEmpty()) return -1
+    val list = jumps.trim().split(" ")
+    var maxResult = -1
+    for (el in list) {
+        try {
+            if (el.isNotEmpty() && el.toInt() > maxResult)
+                maxResult = el.toInt()
+        } catch (e: NumberFormatException) {
+            if (el == " " || el == "-" || el == "%" || el == "") continue
+            else return -1
+        }
+    }
+    return maxResult
+}
 
 /**
  * Сложная
@@ -122,7 +185,15 @@ fun bestLongJump(jumps: String): Int = TODO()
  * При нарушении формата входной строки, а также в случае отсутствия удачных попыток,
  * вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun bestHighJump(jumps: String): Int {
+    val parts = jumps.split(" ")
+    var max = -1
+    for (part in 1..parts.size - 1 step 2) {
+        val maxOfParts = parts[part - 1].toInt()
+        if ('+' in parts[part] && max < maxOfParts) max = maxOfParts
+    }
+    return max
+}
 
 /**
  * Сложная
@@ -133,7 +204,23 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+fun plusMinus(expression: String): Int {
+    if (!"$expression + ".matches(Regex("""(\d+ [+-] )+"""))) {
+        throw IllegalArgumentException(expression)
+    }
+    val parts = Regex(""" """).split(expression)
+    var result = parts[0].toInt()
+    var i = 1
+    while (i < parts.size) {
+        result += parts[i + 1].toInt() *
+                when (parts[i].trim()) {
+                    "+" -> 1
+                    else -> -1
+                }
+        i += 2
+    }
+    return result
+}
 
 /**
  * Сложная
@@ -144,7 +231,15 @@ fun plusMinus(expression: String): Int = TODO()
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
-fun firstDuplicateIndex(str: String): Int = TODO()
+fun firstDuplicateIndex(str: String): Int {
+    val parts = str.toLowerCase().split(" ")
+    var index = 0
+    for (i in 0..parts.size - 2) {
+        if (parts[i] == parts[i + 1]) return index
+        index += parts[i].length + 1
+    }
+    return -1
+}
 
 /**
  * Сложная
@@ -157,7 +252,26 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше либо равны нуля.
  */
-fun mostExpensive(description: String): String = TODO()
+fun mostExpensive(description: String): String {
+    if (description.isEmpty()) return ""
+    var maxCost = 0.0
+    var nameMaxCost = ""
+    try {
+        val parts = description.split("; ")
+        for (el in parts) {
+            val product = el.split(" ")
+            if (product.size != 2) return ""
+            val maxOfParts = product[1].toDouble()
+            if (maxOfParts >= maxCost) {
+                maxCost = maxOfParts
+                nameMaxCost = product[0]
+            }
+        }
+    } catch (e: NumberFormatException) {
+        return ""
+    }
+    return nameMaxCost
+}
 
 /**
  * Сложная
@@ -170,7 +284,34 @@ fun mostExpensive(description: String): String = TODO()
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+fun fromRoman(roman: String): Int {
+    if (roman.isEmpty()) return -1
+    val romNumb = listOf(1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
+    val romAbc = listOf("M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I")
+    var number = 0
+    var elNumb = 0
+    while (elNumb < roman.length) {
+        val el = roman[elNumb].toString()
+        if (el in romAbc) {
+            if (elNumb < roman.length - 1) {
+                val nextEl = roman[elNumb + 1].toString()
+                if (((el == "I" && nextEl == "V") ||
+                            (el == "I" && nextEl == "X") ||
+                            (el == "X" && nextEl == "L") ||
+                            (el == "X" && nextEl == "C") ||
+                            (el == "C" && nextEl == "D") ||
+                            (el == "C" && nextEl == "M"))) {
+                    number += romNumb[romAbc.indexOf(el + nextEl)]
+                    elNumb++
+                } else
+                    number += romNumb[romAbc.indexOf(el)]
+            } else
+                number += romNumb[romAbc.indexOf(el)]
+        } else return -1
+        elNumb++
+    }
+    return number
+}
 
 /**
  * Очень сложная
@@ -208,4 +349,5 @@ fun fromRoman(roman: String): Int = TODO()
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> =TODO()
+
